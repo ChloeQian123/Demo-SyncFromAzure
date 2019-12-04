@@ -278,6 +278,6 @@ PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureU
 #Push to Github Repo
 $GithubRepoName="Demo-SyncFromAzure";
 $CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:c71aeb74d3343d911942ca2e23b9f1c80ee37cc6@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$GithubRepoPushUrl="https://ChloeQian123:55d09a27d61e7253198a10f70173254437ba55d4@github.com/ChloeQian123/Demo-SyncFromAzure.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
