@@ -53,7 +53,6 @@ Write-Host "AzureUserName is " $AzureUserName;
 Write-Host "GithubUserEmail is " $GithubUserEmail;
 Write-Host "GithubUserName is " $GithubUserName;
 
-
 Function FindChild($parentFolderPath,$sourcePath,$destinationPath){
 
   $newPath=$parentFolderPath.Replace($sourcePath,$destinationPath)
@@ -267,19 +266,19 @@ Function PubulishDynamicContent($PAT, $OrganizationName,$ProjectName, $ReposName
 }
 
 #Run the script tasks
-. ((Split-Path $MyInvocation.InvocationName) + $ScriptFolder + $ExcutePSFile);
-RunDynamicPSTasks $ScriptFolder;
+#. ((Split-Path $MyInvocation.InvocationName) + $ScriptFolder + $ExcutePSFile);
+#RunDynamicPSTasks $ScriptFolder;
 
 #Push to Azure Public Repo
-$AzureRepoName="Demo-SupportContent-Public-RP";
-$CloneRepo="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
-$AzureRepoPushUrl="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
-PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureUserName;
+#$AzureRepoName="Demo-SupportContent-Public-RP";
+#$CloneRepo="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
+#$AzureRepoPushUrl="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
+#PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureUserName;
 #PubulishDynamicContent $PAT $OrganizationName $ProjectName $ReposName;
 
 #Push to Github Repo
 $GithubRepoName="Demo-SyncFromAzure";
 $CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:4231755f9ea13bf5b0ad87a376bfe146624afde0@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$GithubRepoPushUrl="https://ChloeQian123:ddb3d2fd4c85d266385290aa9a8d94f27b8a05d0@github.com/ChloeQian123/Demo-SyncFromAzure.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
