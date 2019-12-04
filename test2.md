@@ -17,5 +17,3 @@ search.appverid:
 :::
 
 #mmc.confidentiality: internal
-#mmc.confidentiality: internal
-

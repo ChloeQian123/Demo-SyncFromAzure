@@ -121,10 +121,13 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 	Write-Host "Copy Files from" $sourcePath "to" $destinationPath "exclude .git folder";	
 	$sourceprojGitInfoLocation = $sourcePath+"\.git";
 	Get-ChildItem -Path  $sourcePath -Recurse|Where {$_.FullName -notlike $sourceprojGitInfoLocation}|where {$_.Attributes -notmatch 'Directory'}|Foreach-Object{
-	  $source=$_.FullName;
-	  $destination=$_.FullName.Replace($sourcePath,$destinationPath);
-	  Write-Host "Copy" $source "to" $destination;
-	  Copy-Item $source -Destination $destination -Recurse
+	  if($_.FullName.endswith("azure-pipelines.yml")){}
+	  else{
+	    $source=$_.FullName;
+	    $destination=$_.FullName.Replace($sourcePath,$destinationPath);
+	    Write-Host "Copy" $source "to" $destination;
+	    Copy-Item $source -Destination $destination -Recurse
+	  }
 	}
 	Write-Host "Copy items complete";
 
@@ -273,8 +276,8 @@ PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureU
 #PubulishDynamicContent $PAT $OrganizationName $ProjectName $ReposName;
 
 #Push to Github Repo
-$GithubRepoName="TestSyncFromAzure";
+$GithubRepoName="Demo-SyncFromAzure";
 $CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:f2d6dc74a7285c454a477409f9b3807eaf1c1aac@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$GithubRepoPushUrl="https://ChloeQian123:c71aeb74d3343d911942ca2e23b9f1c80ee37cc6@github.com/ChloeQian123/Demo-SyncFromAzure.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
