@@ -109,9 +109,10 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 	Write-Host "destinationPath" $destinationPath;
 
 	#Remove items
-	Write-Host "Remove all the item except .git folder in destinationPath before update";
+	Write-Host "Remove all the item except .git.Script folder in destinationPath before update";
 	$projGitInfoLocation = $destinationPath+"\.git";
-	Get-ChildItem -Path $destinationPath -Recurse|Where {$_.FullName -notlike $projGitInfoLocation}|Remove-Item -force -Recurse
+	$projScriptInfoLocation = $destinationPath+"\.Script";
+	Get-ChildItem -Path $destinationPath -Recurse|Where {$_.FullName -notlike $projGitInfoLocation}|Where {$_.FullName -notlike $projScriptInfoLocation}|Remove-Item -force -Recurse
 
 	#Create Directory tree
 	Write-Host "Create new directory in" $destinationPath;
@@ -120,7 +121,8 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 	#Coly files
 	Write-Host "Copy Files from" $sourcePath "to" $destinationPath "exclude .git folder";	
 	$sourceprojGitInfoLocation = $sourcePath+"\.git";
-	Get-ChildItem -Path  $sourcePath -Recurse|Where {$_.FullName -notlike $sourceprojGitInfoLocation}|where {$_.Attributes -notmatch 'Directory'}|Foreach-Object{
+	$sourceprojScriptInfoLocation = $sourcePath+"\.Script";
+	Get-ChildItem -Path  $sourcePath -Recurse|Where {$_.FullName -notlike $sourceprojGitInfoLocation}|Where {$_.FullName -notlike $sourceprojScriptInfoLocation}|where {$_.Attributes -notmatch 'Directory'}|Foreach-Object{
 	  if($_.FullName.endswith("azure-pipelines.yml")){}
 	  else{
 	    $source=$_.FullName;
@@ -278,6 +280,6 @@ PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureU
 #Push to Github Repo
 $GithubRepoName="Demo-SyncFromAzure";
 $CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:55d09a27d61e7253198a10f70173254437ba55d4@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$GithubRepoPushUrl="https://ChloeQian123:4231755f9ea13bf5b0ad87a376bfe146624afde0@github.com/ChloeQian123/Demo-SyncFromAzure.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
