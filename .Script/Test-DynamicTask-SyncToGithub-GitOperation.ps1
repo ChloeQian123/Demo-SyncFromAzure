@@ -1,4 +1,4 @@
-param($GithubPAT,$GithubUserEmail,$GithubUserName,$GithubRepoName)
+param($GithubPAT,$GithubUserEmail,$GithubUserName,$GithubRepoName,$AzureUserEmail,$AzureUserName)
 
 
 # set environment variables
@@ -26,10 +26,17 @@ $GithubPAT = $env:GithubPAT;
 $GithubUserEmail =$env:GithubUserEmail;
 $GithubUserName =$env:GithubUserName;
 $GithubRepoName = $env:GithubRepoName;
+$AzureUserEmail = $env:AzureUserEmail;
+$AzureUserName = $env:AzureUserName;
 Write-Host "GithubPAT number is " $GithubPAT;
 Write-Host "GithubUserEmail is " $GithubUserEmail;
 Write-Host "GithubUserName is " $GithubUserName;
 Write-Host "GithubRepoName is " $GithubRepoName;
+Write-Host "AzureUserEmail is " $AzureUserEmail;
+Write-Host "AzureUserName is " $AzureUserName;
+
+git config --global user.email $AzureUserEmail
+git config --global user.name $AzureUserName
 $ScriptFolder =".Script\";
 $CurrentProjContentLocation=Get-location;
 Write-Host "Current Project Content Location" $CurrentProjContentLocation;
