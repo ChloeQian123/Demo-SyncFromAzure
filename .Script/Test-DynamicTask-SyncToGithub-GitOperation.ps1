@@ -98,11 +98,6 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 	Write-Host "Create new directory in" $destinationPath;
 	FindChild $sourcePath $sourcePath $destinationPath;
 
-    $sourceTestFilePath=$sourcePath+"test2.md";
-	$destinationTestFilePath=$destinationPath+"test2.md";
-	Write-Host "copy test2.md";
-    Copy-Item $sourceTestFilePath -Destination $destinationTestFilePath
-
     #generate new item
 	Write-Host "Generate Files to "$destinationPath "exclude .git folder";	
 	$sourceprojGitInfoLocation = $sourcePath+"\.git";
