@@ -193,8 +193,13 @@ Function SplitContent($SplitDir){
 	   Remove-Item -Path $_ -Force
 	 }
 	 $internalFolderList.keys|ForEach-Object{
-	   Write-Host "Remove internal folders and files" $internalFolderList[$_];	
-	   Remove-Item -Path $internalFolderList[$_] -Recurse
+	   $objectPath = $internalFolderList[$_];
+	   if(Test-Path -Path $objectPath){
+	     Write-Host "Remove internal folders and files" $objectPath;	
+	     Remove-Item -Path $objectPath -Recurse
+       }else{
+         Write-Host $objectPath "not exist";
+       }
 	 }
 }
 
