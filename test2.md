@@ -15,13 +15,3 @@ search.appverid:
 
 :::template /.templates/CWQLContent/AzureStorage/Storage-Features.md
 :::
-
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal
-
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal
-#mmc.confidentiality: internal

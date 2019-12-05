@@ -279,6 +279,6 @@ Function PubulishDynamicContent($PAT, $OrganizationName,$ProjectName, $ReposName
 #Push to Github Repo
 $GithubRepoName="Demo-SyncFromAzure";
 $CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:5adf8affdcf06139c817c7d86fd42a20772439ed@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$GithubRepoPushUrl="https://ChloeQian123:98fa100f699a0d76ba317b14ec8be5464dabfe3c@github.com/ChloeQian123/Demo-SyncFromAzure.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
