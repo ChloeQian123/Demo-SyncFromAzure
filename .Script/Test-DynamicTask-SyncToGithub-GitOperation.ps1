@@ -1,57 +1,39 @@
-param($PAT,$OrganizationName,$ProjectName,$ReposName,$AzureUserEmail,$AzureUserName,$GithubUserEmail,$GithubUserName,$ExcutePSFile)
+param($GithubPAT,$GithubUserEmail,$GithubUserName,$GithubRepoName)
 
-if(-not $ExcutePSFile)
-{
-	Write-Error "You must set the ExcutePSFile environment variable - For example, DynamicTask-Main-Daily.ps1";
-    exit 1;
-}
-
-$ScriptFolder =".Script\";
-$CurrentProjContentLocation=Get-location;
-Write-Host "Current Project Content Location" $CurrentProjContentLocation;
 
 # set environment variables
-if(-not $env:PAT)
+if(-not $env:GithubPAT)
 {
 	Write-Error "You must set the PAT environment variable";
     exit 1;
 }
-if(-not $env:OrganizationName)
+if(-not $env:GithubUserEmail)
 {
-	Write-Error "You must set the OrganizationName environment variable - For example, Supportability";
+	Write-Error "You must set the GithubUserEmail environment variable";
     exit 1;
 }
-if(-not $env:ProjectName)
+if(-not $env:GithubUserName)
 {
-	Write-Error "You must set the ProjectName environment variable - For example, Azure";
+	Write-Error "You must set the GithubUserName environment variable";
     exit 1;
 }
-if(-not $env:ReposName)
+if(-not $env:GithubRepoName)
 {
-	Write-Error "You must set the ReposName environment variable - For example, WikiContent";
+	Write-Error "You must set the GithubRepoName environment variable";
     exit 1;
 }
-
-$PAT = $env:PAT;
-$OrganizationName = $env:OrganizationName;
-$ProjectName = $env:ProjectName;
-$ReposName = $env:ReposName;
-$AzureUserEmail = $env:AzureUserEmail;
-$AzureUserName = $env:AzureUserName;
+$GithubPAT = $env:GithubPAT;
 $GithubUserEmail =$env:GithubUserEmail;
 $GithubUserName =$env:GithubUserName;
-
-git config --global user.email $AzureUserEmail
-git config --global user.name $AzureUserName
-
-Write-Host "pat number is " $PAT;
-Write-Host "env pat number is " $env:PAT;
-Write-Host "OrganizationName is " $OrganizationName;
-Write-Host "ProjectName is " $ProjectName;
-Write-Host "AzureUserEmail is " $AzureUserEmail;
-Write-Host "AzureUserName is " $AzureUserName;
+$GithubRepoName = $env:GithubRepoName;
+Write-Host "GithubPAT number is " $GithubPAT;
 Write-Host "GithubUserEmail is " $GithubUserEmail;
 Write-Host "GithubUserName is " $GithubUserName;
+Write-Host "GithubRepoName is " $GithubRepoName;
+$ScriptFolder =".Script\";
+$CurrentProjContentLocation=Get-location;
+Write-Host "Current Project Content Location" $CurrentProjContentLocation;
+
 
 Function FindChild($parentFolderPath,$sourcePath,$destinationPath){
 
@@ -82,7 +64,6 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 {
     $MixProjLocation = Get-Location;
     Write-Host "Current Location is:" $MixProjLocation;
-    #$sshItemLocation = $MixProjLocation.ToString() + "\.test\.ssh\*";
 
 	#get back to parent folder of current project
 	cd ..
@@ -132,12 +113,10 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 	    $source=$_.FullName;
 	    $destination=$_.FullName.Replace($sourcePath,$destinationPath);
 	    Write-Host "Copy" $source "to" $destination;
-         
-	    Copy-Item $source -Destination $destination
+	    Copy-Item $source -Destination $destination -Recurse
 	  }
 	}
 	Write-Host "Copy items complete";
-
 
 	git add .
 	
@@ -160,125 +139,12 @@ Function PushtoRemote($CloneRepo,$RepoPushUrl,$RepoName,$UserEmail,$UserName)
 
     cd ..
 
-		#if(Test-Path -Path $destinationPath){
-	#	Write-Host $destinationPath "exist";
-	#}else{
-	#   Write-Host $destinationPath "not exist";
-	#   New-Item -ItemType "directory" -path $destinationPath
-	#}
-
-	#$ItemListofVssAdministratorssh= Get-ChildItem -Path "C:\Users\VssAdministrator\.ssh" -Force;
-	#Write-Host "C:\Users\VssAdministrator\.ssh";
-	#ForEach($Item in $ItemListofVssAdministratorssh){
-	#   Write-Host $Item.FullName;
-	#}
-
-	#$currentyDir = Split-Path -Parent $MyInvocation.MyCommand.Definition;
-    #Copy-Item $sshItemLocation -Destination "C:\Users\VssAdministrator\.ssh" -Recurse
-
-	#Write-Host "Copy ssh item manually to C:\Users\VssAdministrator\.ssh" $MixProjLocation;
-	#$ItemListofVssAdministratorssh= Get-ChildItem -Path "C:\Users\VssAdministrator\.ssh" -Force;
-	#Write-Host "C:\Users\VssAdministrator\.ssh";
-	#ForEach($Item in $ItemListofVssAdministratorssh){
-	#   Write-Host $Item.FullName;
-	#}
-
-
-    #Write-Host "Try Again Push to remote Repo";
-    #git push origin master
-
-	#Write-Host "Delete local Repo ../GithubTempRepo";
-	#Write-Host "Github operations complete";
 }
 
-Function PubulishDynamicContent($PAT, $OrganizationName,$ProjectName, $ReposName)
-{
-	if ((git status) -match "working tree clean") {
-		# Nothing changed, we're done
-		Write-Host "Working tree clean";
-		return;
-	}
-	else {
-		Write-Host "Status after scripts:"
-		git status
-		Write-Host "Diff after scripts:"
-		git diff
-
-		# Create a unique branch name
-		$dateString = [DateTime]::Now.ToString("yyyyMMddHHmmss")
-		$branchName = "autoupdate-$dateString"
-
-		$CommitText = "Automatic Dynamic Content Update"
-		$CommitTitleText = "Automatic Dynamic Content Update"
-
-		$DevOPSDomain = "dev.azure.com"
-		$RemoteURL = "https://${OrganizationName}:$PAT@$DevOPSDomain/$OrganizationName/$ProjectName/_git/$ReposName"
-		$PRResponseURL = "https://$DevOPSDomain/$OrganizationName/$ProjectName/_apis/git/repositories/$ReposName/pullrequests?api-version=5.0"
-    
-		# Commit our changes to a new branch, and push
-		git branch $branchName
-		git checkout $branchName
-		git add .
-		if ((git commit -m $CommitTitleText) -match "working tree clean") 
-		{
-			Write-Host "No actual changes made.";
-			return;
-		}
-		git commit -m $CommitText
-		git remote add auth $RemoteURL
-		git push -u auth $branchName
-
-        git remote set-url origin $RemoteURL
-		$today = [DateTime]::Now;
-        $dateStringDel= $today.AddDays(-7).ToString("yyyy-MM-dd")
-		$dateStringDel
-		Write-Host "View Branch"
-        git branch -r
-        Write-Host "Delete Branch 7 days ago"
-		git branch --remote|
-        Where-Object{!$_.contains("master") -and $_.contains("autoupdate-") }|
-        Where-Object{[datetime]::Parse((git log -1 $_.trim() --pretty=format:"%cD")) -lt $dateStringDel}|
-        ForEach-Object{git push origin --delete ($_.Replace("origin/","")).trim()}
-        git branch -r
-        
-		# Open a pull request
-		$encodedPAT = [Convert]::ToBase64String([System.Text.ASCIIEncoding]::ASCII.GetBytes(":" + $PAT))
-		$createPRResponse = Invoke-RestMethod -Method POST `
-			-Uri $PRResponseURL `
-			-ContentType "application/json" `
-			-Headers @{"Authorization" = "Basic $encodedPAT"} `
-			-Body "{ sourceRefName: `"refs/heads/$branchName`", targetRefName: `"refs/heads/master`", title: `"$CommitTitleText`" }"
-
-		$prid = $createPRResponse.pullRequestId
-		$commitId = $createPRResponse.lastMergeSourceCommit.commitId | Select -First 1
-
-		# Wait 5 seconds. Azure DevOps seems to need a few seconds before we try to complete.
-		Start-Sleep 5
-		$RestPATCHURL = "https://$DevOPSDomain/$OrganizationName/$ProjectName/_apis/git/repositories/$ReposName/pullrequests/" + $prid + "?api-version=5.0"
-
-		# Now complete the pull request and override policies
-		Invoke-RestMethod -Method PATCH `
-			-Uri ($RestPATCHURL) `
-			-ContentType "application/json" `
-			-Headers @{"Authorization" = "Basic $encodedPAT"} `
-			-Body "{ status: `"completed`", lastMergeSourceCommit: { commitId: `"$commitId`" }, completionOptions: { bypassPolicy: `"true`", bypassReason: `"$CommitTitleText`"  } }"
-	}
-}
-
-#Run the script tasks
-#. ((Split-Path $MyInvocation.InvocationName) + $ScriptFolder + $ExcutePSFile);
-#RunDynamicPSTasks $ScriptFolder;
-
-#Push to Azure Public Repo
-#$AzureRepoName="Demo-SupportContent-Public-RP";
-#$CloneRepo="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
-#$AzureRepoPushUrl="https://ChloeQian123:f5yvvtkgvu5r6d5feyqpmojwxdgkvjyese33vq2xspb6fve3kgqa@dev.azure.com/ChloeQian123/ChloeQian123.github.io/_git/Demo-SupportContent-Public-RP";
-#PushtoRemote $CloneRepo $AzureRepoPushUrl $AzureRepoName $AzureUserEmail $AzureUserName;
-#PubulishDynamicContent $PAT $OrganizationName $ProjectName $ReposName;
 
 #Push to Github Repo
 $GithubRepoName="Demo-SyncFromAzure";
-$CloneRepo="https://github.com/ChloeQian123/Demo-SyncFromAzure.git";
-$GithubRepoPushUrl="https://ChloeQian123:80b2186aa0032b21b7e5b164bf2758696cf4988d@github.com/ChloeQian123/Demo-SyncFromAzure.git";
+$CloneRepo="https://github.com/${GithubUserName}/${GithubRepoName}.git";
+$GithubRepoPushUrl="https://${GithubUserName}:${GithubPAT}@github.com/${GithubUserName}/${GithubRepoName}.git";
 PushtoRemote $CloneRepo $GithubRepoPushUrl $GithubRepoName $GithubUserEmail $GithubUserName;
 
